@@ -1,0 +1,132 @@
+package android.pursuit.org.psychic_app_hw_hyunki_chung;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.pursuit.org.psychic_app_hw_hyunki_chung.model.Image;
+import android.support.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ResultsDatabase extends SQLiteOpenHelper {
+    private static final String TABLE_RESULTS = "Results";
+    private static final String TABLE_IMAGES = "Images";
+    private static final String DATATBASE_NAME = "results.db";
+    private static final int SCHEMA_VERSION = 1;
+    private static ResultsDatabase resultsDatabaseInstance;
+
+    double attempts;
+    double correct;
+
+    public static synchronized ResultsDatabase getInstance(Context context) {
+        if (resultsDatabaseInstance == null) {
+            resultsDatabaseInstance = new ResultsDatabase(context.getApplicationContext());
+        }
+        return resultsDatabaseInstance;
+    }
+
+    ResultsDatabase(@Nullable Context context) {
+        super(context, DATATBASE_NAME, null, SCHEMA_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(
+                "CREATE TABLE " + TABLE_RESULTS +
+                        " (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "num_attempts INTEGER, num_correct INTEGER);");
+        db.execSQL(
+                "CREATE TABLE " + TABLE_IMAGES +
+                        " (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "image_type TEXT, image_url TEXT);");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    public void updateResults(boolean isCorrect) {
+        Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT num_attempts,num_correct" + " FROM " + TABLE_RESULTS + ";", null);
+        if (cursor.moveToFirst() && cursor.getCount() > 0) {
+//            do {
+                ContentValues values = new ContentValues();
+                values.put("num_attempts", cursor.getDouble(cursor.getColumnIndex("num_attempts")) + 1);
+
+                if (isCorrect) {
+                    values.put("num_correct", cursor.getDouble(cursor.getColumnIndex("num_correct")) + 1);
+                }
+                getWritableDatabase().update(TABLE_RESULTS, values, null, null);
+//            } while (cursor.moveToNext());
+
+        } else {
+
+            if (isCorrect) {
+                getWritableDatabase().execSQL("INSERT INTO " + TABLE_RESULTS +
+                        "(num_attempts, num_correct) VALUES(1,1);");
+            } else {
+                getWritableDatabase().execSQL("INSERT INTO " + TABLE_RESULTS +
+                        "(num_attempts, num_correct) VALUES(1,0);");
+            }
+        }
+
+        cursor.close();
+    }
+
+    public int getResults() {
+
+        Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT num_attempts,num_correct" + " FROM " + TABLE_RESULTS + ";", null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    attempts = cursor.getDouble(cursor.getColumnIndex("num_attempts"));
+                    correct = cursor.getDouble(cursor.getColumnIndex("num_correct"));
+                } while (cursor.moveToNext());
+            }
+        }
+        cursor.close();
+        return (int) Math.floor((correct / attempts) * 100);
+    }
+
+    public void addImage(String type, String imageURL) {
+//        Cursor cursor = getReadableDatabase().rawQuery(
+//                "SELECT * FROM " + TABLE_IMAGES + " WHERE image_type = '" + type +
+//                        "' AND image_url = '" + imageURL + "';", null);
+//        if(cursor.getCount() == 0) {
+        getWritableDatabase().execSQL("INSERT INTO " + TABLE_IMAGES +
+                "(image_type, image_url) VALUES('" + type + "','" + imageURL + "');");
+//        }
+//        cursor.close();
+    }
+
+    public List<Image> getImageList(String type) {
+        List<Image> imageList = new ArrayList<>();
+        Image image = null;
+        Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + TABLE_IMAGES + ";", null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+
+                do {
+                    if (cursor.getString(cursor.getColumnIndex("image_type")).equals(type)) {
+                        image = new Image(
+                                cursor.getString(cursor.getColumnIndex("image_type")),
+                                cursor.getString(cursor.getColumnIndex("image_url")));
+
+                        imageList.add(image);
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
+        return imageList;
+    }
+
+
+}

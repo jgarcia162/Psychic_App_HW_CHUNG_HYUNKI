@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Psychic_App_HW_HYUNKI_CHUNG</string>
+    <string-array name="spinner_array">
+        <item>Cats</item>
+        <item>Dogs</item>
+        <item>Dragons</item>
+    </string-array>
+</resources>
