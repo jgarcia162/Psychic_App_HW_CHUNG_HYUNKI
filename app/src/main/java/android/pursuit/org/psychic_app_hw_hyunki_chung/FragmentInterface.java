@@ -5,4 +5,5 @@ interface FragmentInterface {
     void showChoiceFragment(String query);
 
     void showResultFragment(String userChoice, String computerChoice);
+
 }

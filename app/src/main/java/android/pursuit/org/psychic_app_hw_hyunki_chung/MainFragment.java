@@ -18,9 +18,9 @@ import android.widget.TextView;
 public class MainFragment extends Fragment {
 
     private FragmentInterface fragmentInterface;
-    private TextView textView;
     private Button go_button;
     private String query;
+
 
     public static MainFragment newInstance() {
         return new MainFragment();

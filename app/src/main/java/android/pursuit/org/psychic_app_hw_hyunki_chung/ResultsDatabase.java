@@ -93,19 +93,19 @@ public class ResultsDatabase extends SQLiteOpenHelper {
     }
 
     public void addImage(String type, String imageURL) {
-//        Cursor cursor = getReadableDatabase().rawQuery(
-//                "SELECT * FROM " + TABLE_IMAGES + " WHERE image_type = '" + type +
-//                        "' AND image_url = '" + imageURL + "';", null);
-//        if(cursor.getCount() == 0) {
+        Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + TABLE_IMAGES + " WHERE image_type = '" + type +
+                        "' AND image_url = '" + imageURL + "';", null);
+        if(cursor.getCount() == 0) {
         getWritableDatabase().execSQL("INSERT INTO " + TABLE_IMAGES +
                 "(image_type, image_url) VALUES('" + type + "','" + imageURL + "');");
-//        }
-//        cursor.close();
+        }
+        cursor.close();
     }
 
     public List<Image> getImageList(String type) {
         List<Image> imageList = new ArrayList<>();
-        Image image = null;
+        Image image;
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + TABLE_IMAGES + ";", null);
 
@@ -124,9 +124,16 @@ public class ResultsDatabase extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         }
+        cursor.close();
 
         return imageList;
     }
 
-
+    public void clearResults(){
+            SQLiteDatabase db = this.getWritableDatabase();
+             db.delete(TABLE_RESULTS,null,null);
+            db.execSQL("delete from "+ TABLE_RESULTS);
+//            db.execSQL("TRUNCATE table" + TABLE_NAME);
+            db.close();
+    }
 }

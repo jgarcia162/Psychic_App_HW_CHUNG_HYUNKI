@@ -62,6 +62,7 @@ public class ChoiceFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
         imageList = resultsDatabase.getImageList(query);
+        Log.d("danny",imageList.get(0).getImage_url());
         computerChoice = randomChoice(imageList);
 
         imageOne = view.findViewById(R.id.imageView_1);

@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
         PixabayService pixabayService = retrofit.create(PixabayService.class);
 
         Call<PixabayResponse> responseCats =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"jaguars",request_image_type);
+                pixabayService.getPixabayResponse(pixabay_apiKey,"wild cat",request_image_type);
         Call<PixabayResponse> responseDogs =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"wolfhounds",request_image_type);
+                pixabayService.getPixabayResponse(pixabay_apiKey,"wolf",request_image_type);
         Call<PixabayResponse> responseDragons =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"komodos",request_image_type);
+                pixabayService.getPixabayResponse(pixabay_apiKey,"komodo dragon",request_image_type);
 
         responseCats.enqueue(new Callback<PixabayResponse>() {
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
                 final List<Hit> hits = response.body().getHits();
                 for (int i = 0; i < 4; i++) {
                     resultsDatabase.addImage("Cats",hits.get(i).getWebformatURL());
-
+                    Log.d("danny",hits.get(i).getWebformatURL());
                 }
             }
 
