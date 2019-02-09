@@ -7,6 +7,7 @@ import android.pursuit.org.psychic_app_hw_hyunki_chung.model.PixabayResponse;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.model.Result;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.network.PixabayService;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.network.RetrofitInstance;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -138,6 +139,14 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
                 .beginTransaction()
                 .replace(R.id.main_container,resultFragment)
                 .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void reset() {
+        final Fragment mainFragment = MainFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_container, mainFragment)
                 .commit();
     }
 }

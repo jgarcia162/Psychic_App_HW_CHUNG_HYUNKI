@@ -1,31 +1,33 @@
 package android.pursuit.org.psychic_app_hw_hyunki_chung;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import static android.view.View.GONE;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 public class ResultFragment extends Fragment {
     private FragmentInterface fragmentInterface;
     private ResultsDatabase resultsDatabase;
     private TextView percentView;
     private TextView conclusionView;
+    private ImageView resultImageView;
     private Button clearButton;
+    private Button resetButton;
     private String userChoice;
     private String computerChoice;
     private boolean isCorrect;
@@ -64,9 +66,10 @@ public class ResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
-
+        resetButton = view.findViewById(R.id.reset_button);
         clearButton = view.findViewById(R.id.clear_button);
         percentView = view.findViewById(R.id.percent_textView);
+        resultImageView = view.findViewById(R.id.result_imageView);
         conclusionView = view.findViewById(R.id.conclusion_textView);
 
         if (userChoice.equals(computerChoice)){
@@ -75,8 +78,35 @@ public class ResultFragment extends Fragment {
         resultsDatabase.updateResults(isCorrect);
 
         if(isCorrect){
+
+            Glide.with(getActivity().getApplicationContext())
+                    .load("https://media.giphy.com/media/l2SpRSfoMQrOF00sE/giphy.gif")
+                    .thumbnail(0.1f)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .centerCrop()
+                    .into(new GlideDrawableImageViewTarget(resultImageView) {
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                            super.onResourceReady(resource, animation);
+
+                            //check isRefreshing
+                        }
+                    });
             conclusionView.setText("Correct");
         }else{
+            Glide.with(getActivity().getApplicationContext())
+                    .load("https://media.giphy.com/media/26ufdzuMVeOnnrj68/giphy.gif")
+                    .thumbnail(0.1f)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .centerCrop()
+                    .into(new GlideDrawableImageViewTarget(resultImageView) {
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                            super.onResourceReady(resource, animation);
+
+                            //check isRefreshing
+                        }
+                    });
             conclusionView.setText("Incorrect");
         }
 
@@ -126,8 +156,13 @@ public class ResultFragment extends Fragment {
             }
         });
 
+        resetButton.setOnClickListener(new View.OnClickListener() {
 
-
+            @Override
+            public void onClick(View v) {
+                fragmentInterface.reset();
+            }
+        });
 
     }
 }

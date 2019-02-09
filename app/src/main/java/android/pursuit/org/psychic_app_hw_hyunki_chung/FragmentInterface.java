@@ -6,4 +6,6 @@ interface FragmentInterface {
 
     void showResultFragment(String userChoice, String computerChoice);
 
+    void reset();
+
 }
