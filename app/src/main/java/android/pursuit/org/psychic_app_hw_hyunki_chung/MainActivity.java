@@ -36,24 +36,24 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
 
         PixabayService pixabayService = retrofit.create(PixabayService.class);
 
-        Call<PixabayResponse> responseCats =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"wild cat",request_image_type);
-        Call<PixabayResponse> responseDogs =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"wolf",request_image_type);
-        Call<PixabayResponse> responseDragons =
-                pixabayService.getPixabayResponse(pixabay_apiKey,"komodo dragon",request_image_type);
+        Call<PixabayResponse> responseMan =
+                pixabayService.getPixabayResponse(pixabay_apiKey,"man",request_image_type);
+        Call<PixabayResponse> responseBear =
+                pixabayService.getPixabayResponse(pixabay_apiKey,"bear",request_image_type);
+        Call<PixabayResponse> responsePig =
+                pixabayService.getPixabayResponse(pixabay_apiKey,"pig",request_image_type);
 
-        if(!sharedPreferences.contains("Cats")) {
-            responseCats.enqueue(new Callback<PixabayResponse>() {
+        if(!sharedPreferences.contains("Man")) {
+            responseMan.enqueue(new Callback<PixabayResponse>() {
 
                 @Override
                 public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
                     final List<Hit> hits = response.body().getHits();
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     for (int i = 0; i < 4; i++) {
-                        resultsDatabase.addImage("Cats", hits.get(i).getWebformatURL());
+                        resultsDatabase.addImage("Man", hits.get(i).getWebformatURL());
                         Log.d("danny", hits.get(i).getWebformatURL());
-                        editor.putString("Cats", hits.get(i).getWebformatURL());
+                        editor.putString("Man", hits.get(i).getWebformatURL());
                     }
                     editor.apply();
                 }
@@ -64,16 +64,16 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
                 }
             });
         }
-        if(!sharedPreferences.contains("Dogs")) {
-            responseDogs.enqueue(new Callback<PixabayResponse>() {
+        if(!sharedPreferences.contains("Bear")) {
+            responseBear.enqueue(new Callback<PixabayResponse>() {
 
                 @Override
                 public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
                     final List<Hit> hits = response.body().getHits();
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     for (int i = 0; i < 4; i++) {
-                        resultsDatabase.addImage("Dogs", hits.get(i).getWebformatURL());
-                        editor.putString("Dogs", hits.get(i).getWebformatURL());
+                        resultsDatabase.addImage("Bear", hits.get(i).getWebformatURL());
+                        editor.putString("Bear", hits.get(i).getWebformatURL());
                     }
                     editor.apply();
                 }
@@ -84,16 +84,16 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
                 }
             });
         }
-        if(!sharedPreferences.contains("Dogs")) {
-            responseDragons.enqueue(new Callback<PixabayResponse>() {
+        if(!sharedPreferences.contains("Pig")) {
+            responsePig.enqueue(new Callback<PixabayResponse>() {
 
                 @Override
                 public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
                     final List<Hit> hits = response.body().getHits();
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     for (int i = 0; i < 4; i++) {
-                        resultsDatabase.addImage("Dragons", hits.get(i).getWebformatURL());
-                        editor.putString("Dogs", hits.get(i).getWebformatURL());
+                        resultsDatabase.addImage("Pig", hits.get(i).getWebformatURL());
+                        editor.putString("Pig", hits.get(i).getWebformatURL());
                     }
                     editor.apply();
                 }
