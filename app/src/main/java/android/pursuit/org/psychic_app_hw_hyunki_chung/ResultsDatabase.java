@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.model.Image;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,14 +98,17 @@ public class ResultsDatabase extends SQLiteOpenHelper {
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + TABLE_IMAGES + " WHERE image_type = '" + type +
                         "' AND image_url = '" + imageURL + "';", null);
+
         if(cursor.getCount() == 0) {
         getWritableDatabase().execSQL("INSERT INTO " + TABLE_IMAGES +
                 "(image_type, image_url) VALUES('" + type + "','" + imageURL + "');");
         }
+
         cursor.close();
     }
 
     public List<Image> getImageList(String type) {
+        Log.d("query getimagelist database", type);
         List<Image> imageList = new ArrayList<>();
         Image image;
         Cursor cursor = getReadableDatabase().rawQuery(
@@ -114,9 +119,12 @@ public class ResultsDatabase extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
 
                 do {
+                    Log.d("query looping type in do loop",cursor.getString(cursor.getColumnIndex("image_type")));
                     if (cursor.getString(cursor.getColumnIndex("image_type")).equals(type)) {
+                        Log.d("getimagelist",cursor.getString(cursor.getColumnIndex("image_type")));
                         image = new Image(
-                                cursor.getString(cursor.getColumnIndex("image_type")),
+
+                                type,
                                 cursor.getString(cursor.getColumnIndex("image_url")));
 
                         imageList.add(image);

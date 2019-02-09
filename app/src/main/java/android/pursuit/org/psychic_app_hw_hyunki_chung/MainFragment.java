@@ -54,6 +54,7 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     query = parent.getItemAtPosition(position).toString();
+                    Log.d("query main frag", query);
 
                 }
 
@@ -76,8 +77,7 @@ public class MainFragment extends Fragment {
         go_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                Log.d("query go button", query);
                 fragmentInterface.showChoiceFragment(query);
             }
         });

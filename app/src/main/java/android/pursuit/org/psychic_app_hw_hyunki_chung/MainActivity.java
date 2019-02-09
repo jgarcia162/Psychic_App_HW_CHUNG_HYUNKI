@@ -1,5 +1,7 @@
 package android.pursuit.org.psychic_app_hw_hyunki_chung;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.model.Hit;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.model.PixabayResponse;
 import android.pursuit.org.psychic_app_hw_hyunki_chung.model.Result;
@@ -19,11 +21,14 @@ import retrofit2.Retrofit;
 public class MainActivity extends AppCompatActivity implements FragmentInterface {
     public static final String pixabay_apiKey = "11491264-e9a60979d4074889ac3e00286";
     public static final String request_image_type = "photo";
+    SharedPreferences sharedPreferences;
+    public static final String SharedPreferences_TAG = "network call exists";
     ResultsDatabase resultsDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = getApplicationContext().getSharedPreferences(SharedPreferences_TAG, Context.MODE_PRIVATE);
 
         Retrofit retrofit = RetrofitInstance.getInstance();
         resultsDatabase = new ResultsDatabase(getApplicationContext());
@@ -37,55 +42,67 @@ public class MainActivity extends AppCompatActivity implements FragmentInterface
         Call<PixabayResponse> responseDragons =
                 pixabayService.getPixabayResponse(pixabay_apiKey,"komodo dragon",request_image_type);
 
-        responseCats.enqueue(new Callback<PixabayResponse>() {
+        if(!sharedPreferences.contains("Cats")) {
+            responseCats.enqueue(new Callback<PixabayResponse>() {
 
-            @Override
-            public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
-                final List<Hit> hits = response.body().getHits();
-                for (int i = 0; i < 4; i++) {
-                    resultsDatabase.addImage("Cats",hits.get(i).getWebformatURL());
-                    Log.d("danny",hits.get(i).getWebformatURL());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PixabayResponse> call, Throwable t) {
-
-            }
-        });
-
-        responseDogs.enqueue(new Callback<PixabayResponse>() {
-
-            @Override
-            public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
-                final List<Hit> hits = response.body().getHits();
-                for (int i = 0; i < 4; i++) {
-                    resultsDatabase.addImage("Dogs",hits.get(i).getWebformatURL());
+                @Override
+                public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
+                    final List<Hit> hits = response.body().getHits();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    for (int i = 0; i < 4; i++) {
+                        resultsDatabase.addImage("Cats", hits.get(i).getWebformatURL());
+                        Log.d("danny", hits.get(i).getWebformatURL());
+                        editor.putString("Cats", hits.get(i).getWebformatURL());
+                    }
+                    editor.apply();
                 }
 
-            }
+                @Override
+                public void onFailure(Call<PixabayResponse> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<PixabayResponse> call, Throwable t) {
-
-            }
-        });
-
-        responseDragons.enqueue(new Callback<PixabayResponse>() {
-
-            @Override
-            public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
-                final List<Hit> hits = response.body().getHits();
-                for (int i = 0; i < 4; i++) {
-                    resultsDatabase.addImage("Dragons",hits.get(i).getWebformatURL());
                 }
-            }
+            });
+        }
+        if(!sharedPreferences.contains("Dogs")) {
+            responseDogs.enqueue(new Callback<PixabayResponse>() {
 
-            @Override
-            public void onFailure(Call<PixabayResponse> call, Throwable t) {
+                @Override
+                public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
+                    final List<Hit> hits = response.body().getHits();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    for (int i = 0; i < 4; i++) {
+                        resultsDatabase.addImage("Dogs", hits.get(i).getWebformatURL());
+                        editor.putString("Dogs", hits.get(i).getWebformatURL());
+                    }
+                    editor.apply();
+                }
 
-            }
-        });
+                @Override
+                public void onFailure(Call<PixabayResponse> call, Throwable t) {
+
+                }
+            });
+        }
+        if(!sharedPreferences.contains("Dogs")) {
+            responseDragons.enqueue(new Callback<PixabayResponse>() {
+
+                @Override
+                public void onResponse(Call<PixabayResponse> call, Response<PixabayResponse> response) {
+                    final List<Hit> hits = response.body().getHits();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    for (int i = 0; i < 4; i++) {
+                        resultsDatabase.addImage("Dragons", hits.get(i).getWebformatURL());
+                        editor.putString("Dogs", hits.get(i).getWebformatURL());
+                    }
+                    editor.apply();
+                }
+
+                @Override
+                public void onFailure(Call<PixabayResponse> call, Throwable t) {
+
+                }
+            });
+        }
 
 
         getSupportFragmentManager().beginTransaction()

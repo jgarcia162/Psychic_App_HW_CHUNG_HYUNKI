@@ -1,7 +1,9 @@
 package android.pursuit.org.psychic_app_hw_hyunki_chung;
 
 import android.animation.Animator;
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +18,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import static android.view.View.GONE;
+
 public class ResultFragment extends Fragment {
     private FragmentInterface fragmentInterface;
     private ResultsDatabase resultsDatabase;
@@ -25,6 +29,7 @@ public class ResultFragment extends Fragment {
     private String userChoice;
     private String computerChoice;
     private boolean isCorrect;
+
 
     public static ResultFragment newInstance() {
         return new ResultFragment();
@@ -51,6 +56,7 @@ public class ResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_result, container, false);
     }
 
@@ -76,6 +82,35 @@ public class ResultFragment extends Fragment {
 
         percentView.setText(Integer.toString(resultsDatabase.getResults()) + "% accuracy");
 
+        Animation scaling = AnimationUtils.loadAnimation(getContext(), R.anim.scaling);
+        
+        conclusionView.startAnimation(scaling);
+
+
+        final Animation animSlide = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.left_to_right);
+        final Animation spin = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotate_center);
+
+        spin.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                conclusionView.setVisibility(View.INVISIBLE);
+                clearButton.setEnabled(false);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
         clearButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -83,20 +118,15 @@ public class ResultFragment extends Fragment {
                 resultsDatabase.clearResults();
                 percentView.setText("Results Cleared!");
 
-
-                Animation animSlide = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
-                        R.anim.left_to_right);
                 percentView.startAnimation(animSlide);
 
-
-
-//                ObjectAnimator animator = ObjectAnimator.ofFloat(percentView,"translationX", -70f,70f);
-////                Log.d("danny", Integer.toString(resultsDatabase.getResults()) + "% accuracy");
-//                animator.setDuration(1000);
-//                animator.start();
+                conclusionView.clearAnimation();
+                conclusionView.setAnimation(spin);
 
             }
         });
+
+
 
 
     }

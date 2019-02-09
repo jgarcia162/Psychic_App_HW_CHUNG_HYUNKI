@@ -48,6 +48,7 @@ public class ChoiceFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             query = getArguments().getString("query");
+            Log.d("query choice frag", query);
         }
     }
 
@@ -62,7 +63,7 @@ public class ChoiceFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
         imageList = resultsDatabase.getImageList(query);
-        Log.d("danny",imageList.get(0).getImage_url());
+
         computerChoice = randomChoice(imageList);
 
         imageOne = view.findViewById(R.id.imageView_1);
