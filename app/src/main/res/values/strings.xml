@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Psychic_App_HW_HYUNKI_CHUNG</string>
+    <string name="app_name">Psychic Test</string>
     <string-array name="spinner_array">
         <item>Man</item>
         <item>Bear</item>

@@ -54,7 +54,6 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     query = parent.getItemAtPosition(position).toString();
-                    Log.d("query main frag", query);
 
                 }
 

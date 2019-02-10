@@ -19,8 +19,10 @@ public class SplashTwoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_splash);
         splash = findViewById(R.id.splash_imageView);
+
         final Intent intent = new Intent(this, MainActivity.class);
          mp = MediaPlayer.create(getBaseContext(),R.raw.cartman);
 
