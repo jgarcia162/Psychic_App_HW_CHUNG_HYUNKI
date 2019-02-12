@@ -13,16 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultsDatabase extends SQLiteOpenHelper {
+    // Objects up top, Strings, then primitives at the bottom
+    private static ResultsDatabase resultsDatabaseInstance;
     private static final String TABLE_RESULTS = "Results";
     private static final String TABLE_IMAGES = "Images";
     private static final String DATATBASE_NAME = "results.db";
     private static final int SCHEMA_VERSION = 1;
-    private static ResultsDatabase resultsDatabaseInstance;
+    private double attempts;
+    private double correct;
 
-    double attempts;
-    double correct;
-
-    public static synchronized ResultsDatabase getInstance(Context context) {
+    //nice touch with the synchronized keyword.
+    static synchronized ResultsDatabase getInstance(Context context) {
         if (resultsDatabaseInstance == null) {
             resultsDatabaseInstance = new ResultsDatabase(context.getApplicationContext());
         }
@@ -50,11 +51,10 @@ public class ResultsDatabase extends SQLiteOpenHelper {
 
     }
 
-    public void updateResults(boolean isCorrect) {
+    void updateResults(boolean isCorrect) {
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT num_attempts,num_correct" + " FROM " + TABLE_RESULTS + ";", null);
         if (cursor.moveToFirst() && cursor.getCount() > 0) {
-//            do {
                 ContentValues values = new ContentValues();
                 values.put("num_attempts", cursor.getDouble(cursor.getColumnIndex("num_attempts")) + 1);
 
@@ -62,7 +62,6 @@ public class ResultsDatabase extends SQLiteOpenHelper {
                     values.put("num_correct", cursor.getDouble(cursor.getColumnIndex("num_correct")) + 1);
                 }
                 getWritableDatabase().update(TABLE_RESULTS, values, null, null);
-//            } while (cursor.moveToNext());
 
         } else {
 
@@ -78,23 +77,21 @@ public class ResultsDatabase extends SQLiteOpenHelper {
         cursor.close();
     }
 
-    public int getResults() {
-
+    int getResults() {
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT num_attempts,num_correct" + " FROM " + TABLE_RESULTS + ";", null);
-        if (cursor != null) {
+        //no need for the null check. you always have a cursor object when you call getReadableDatabase, what you might have is an empty table, in that case you can still close the cursor.
             if (cursor.moveToFirst()) {
                 do {
                     attempts = cursor.getDouble(cursor.getColumnIndex("num_attempts"));
                     correct = cursor.getDouble(cursor.getColumnIndex("num_correct"));
                 } while (cursor.moveToNext());
             }
-        }
         cursor.close();
         return (int) Math.floor((correct / attempts) * 100);
     }
 
-    public void addImage(String type, String imageURL) {
+    void addImage(String type, String imageURL) {
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + TABLE_IMAGES + " WHERE image_type = '" + type +
                         "' AND image_url = '" + imageURL + "';", null);
@@ -107,14 +104,13 @@ public class ResultsDatabase extends SQLiteOpenHelper {
         cursor.close();
     }
 
-    public List<Image> getImageList(String type) {
+    List<Image> getImageList(String type) {
         Log.d("query getimagelist database", type);
         List<Image> imageList = new ArrayList<>();
         Image image;
         Cursor cursor = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + TABLE_IMAGES + ";", null);
 
-        if (cursor != null) {
 
             if (cursor.moveToFirst()) {
 
@@ -131,17 +127,15 @@ public class ResultsDatabase extends SQLiteOpenHelper {
                     }
                 } while (cursor.moveToNext());
             }
-        }
         cursor.close();
 
         return imageList;
     }
 
-    public void clearResults(){
+    void clearResults(){
             SQLiteDatabase db = this.getWritableDatabase();
              db.delete(TABLE_RESULTS,null,null);
             db.execSQL("delete from "+ TABLE_RESULTS);
-//            db.execSQL("TRUNCATE table" + TABLE_NAME);
             db.close();
     }
 }

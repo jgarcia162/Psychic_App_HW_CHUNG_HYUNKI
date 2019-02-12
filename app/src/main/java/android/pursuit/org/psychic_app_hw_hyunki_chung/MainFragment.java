@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 public class MainFragment extends Fragment {
 
     private FragmentInterface fragmentInterface;
@@ -65,12 +67,13 @@ public class MainFragment extends Fragment {
             });
         }
 
+        //fragment lifecycles can be at any state during the life of your activity so we have to check for a null activity
         ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(
-                        getActivity(),R.array.spinner_array,R.layout.spinner_item);
+                        Objects.requireNonNull(getActivity()), R.array.spinner_array, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown);
 
-        if(spinner != null){
+        if (spinner != null) {
             spinner.setAdapter(adapter);
         }
 
@@ -82,7 +85,6 @@ public class MainFragment extends Fragment {
             }
         });
     }
-
 
 
 }

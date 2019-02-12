@@ -13,8 +13,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 public class SplashTwoActivity extends AppCompatActivity {
-    ImageView splash;
-    MediaPlayer mp;
+    private ImageView splash;
+    private MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +22,7 @@ public class SplashTwoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         splash = findViewById(R.id.splash_imageView);
         final Intent intent = new Intent(this, MainActivity.class);
-         mp = MediaPlayer.create(getBaseContext(),R.raw.cartman);
-
-
-
+        mp = MediaPlayer.create(getBaseContext(), R.raw.cartman);
 
         final Thread timer = new Thread() {
             public void run() {
@@ -35,12 +32,9 @@ public class SplashTwoActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-
                     startActivity(intent);
                     finish();
-
                 }
-
             }
         };
 
@@ -53,25 +47,16 @@ public class SplashTwoActivity extends AppCompatActivity {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
                         super.onResourceReady(resource, animation);
-
-                        //check isRefreshing
                     }
                 });
-
-
         timer.start();
-
-
-
-
-
-
     }
 
+    //theres no guarantee onDestroy is called, it's only called when the system wants to reclaim resources or if you call finish(). Always use onStop. Read here for more info -> [https://developer.android.com/reference/android/app/Activity#onDestroy%28%29]
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mp != null){
+    protected void onStop() {
+        super.onStop();
+        if (mp != null) {
             mp.release();
         }
     }

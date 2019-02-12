@@ -7,8 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface PixabayService {
-//?key={ KEY }&q=yellow+flowers&image_type=photo
-
     @GET("/api")
     Call<PixabayResponse> getPixabayResponse(@Query("key") String apiKey,
                                              @Query("q") String query,

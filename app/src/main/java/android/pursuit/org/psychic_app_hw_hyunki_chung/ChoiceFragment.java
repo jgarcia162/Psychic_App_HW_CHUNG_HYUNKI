@@ -17,11 +17,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Random;
 
-public class ChoiceFragment extends Fragment {
-
-
+public class ChoiceFragment extends Fragment implements View.OnClickListener {
     private FragmentInterface fragmentInterface;
-    Random rand = new Random();
     private String userChoice;
     private String computerChoice;
     private ResultsDatabase resultsDatabase;
@@ -29,8 +26,8 @@ public class ChoiceFragment extends Fragment {
     private ImageView imageTwo;
     private ImageView imageThree;
     private ImageView imageFour;
-    List<Image> imageList;
-    String query;
+    private List<Image> imageList;
+    private String query;
 
     public static ChoiceFragment newInstance() {
         return new ChoiceFragment();
@@ -43,6 +40,7 @@ public class ChoiceFragment extends Fragment {
             fragmentInterface = (FragmentInterface) context; //if it does we are saving it in a field
         }
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +48,12 @@ public class ChoiceFragment extends Fragment {
             query = getArguments().getString("query");
             Log.d("query choice frag", query);
         }
+
+        //none of these things depend on your views so they can be initialized before the layout is inflated
+        resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
+        imageList = resultsDatabase.getImageList(query);
+        computerChoice = imageList.get(new Random().nextInt((3))).getImage_url();
+
     }
 
     @Override
@@ -61,11 +65,6 @@ public class ChoiceFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
-        imageList = resultsDatabase.getImageList(query);
-
-        computerChoice = randomChoice(imageList);
-
         imageOne = view.findViewById(R.id.imageView_1);
         imageTwo = view.findViewById(R.id.imageView_2);
         imageThree = view.findViewById(R.id.imageView_3);
@@ -76,52 +75,29 @@ public class ChoiceFragment extends Fragment {
         Picasso.get().load(imageList.get(2).getImage_url()).fit().centerCrop().into(imageThree);
         Picasso.get().load(imageList.get(3).getImage_url()).fit().centerCrop().into(imageFour);
 
-        imageOne.setOnClickListener(new View.OnClickListener(){
+        // by implementing the OnClick listener interface we can avoid creating 4 different on Click listeners. This is unnecessary because every click performs the same logic. remember every `new OnClickListener` creates an anonymous class. this uses memory. Here's also an opportunity to use ButterKnife and eliminate this boilerplate.
+        imageOne.setOnClickListener(this);
+        imageTwo.setOnClickListener(this);
+        imageThree.setOnClickListener(this);
+        imageFour.setOnClickListener(this);
+    }
 
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.imageView_1:
                 userChoice = imageList.get(0).getImage_url();
-                fragmentInterface.showResultFragment(userChoice,computerChoice);
-            }
-        });
-        imageTwo.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.imageView_2:
                 userChoice = imageList.get(1).getImage_url();
-                fragmentInterface.showResultFragment(userChoice,computerChoice);
-            }
-        });
-        imageThree.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.imageView_3:
                 userChoice = imageList.get(2).getImage_url();
-                fragmentInterface.showResultFragment(userChoice,computerChoice);
-            }
-        });
-        imageFour.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.imageView_4:
                 userChoice = imageList.get(3).getImage_url();
-                fragmentInterface.showResultFragment(userChoice,computerChoice);
-            }
-        });
-
-
+                break;
+        }
+        fragmentInterface.showResultFragment(userChoice, computerChoice);
     }
-
-    public String randomChoice(List<Image> imageList) {
-        int max = 3;
-        int min = 0;
-
-        int randomNum = rand.nextInt((max - min) + 1);
-
-        return imageList.get(randomNum).getImage_url();
-    }
-
-
-
-
 }

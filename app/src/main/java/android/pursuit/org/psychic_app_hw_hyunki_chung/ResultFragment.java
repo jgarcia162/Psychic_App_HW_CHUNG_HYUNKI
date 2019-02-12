@@ -48,24 +48,24 @@ public class ResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             userChoice = getArguments().getString("userChoice");
             computerChoice = getArguments().getString("computerChoice");
         }
+        //component related objects can be initialized in onCreate.
+        resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_result, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        resultsDatabase = ResultsDatabase.getInstance(this.getActivity());
+        //all these views, heres a perfect opportunity to use ButterKnife.
         resetButton = view.findViewById(R.id.reset_button);
         clearButton = view.findViewById(R.id.clear_button);
         percentView = view.findViewById(R.id.percent_textView);
